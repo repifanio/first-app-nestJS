@@ -1,23 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Controller, Get, Post, Body, Put, Param } from '@nestjs/common';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from './entity/user.entity';
 import { UserService } from './shared/user.service';
 
 @Controller('users')
 export class UsersController {
 
-    constructor(@InjectRepository(User)
-    private usersRepository: Repository<User>, ) {
-
-    }
+    constructor(private readonly usersService: UserService) {}
     
+    @Post()
+    create(@Body() createUserDto: CreateUserDto): Promise<User> {
+      return this.usersService.create(createUserDto);
+    }
 
-  @Get()
-  findAll(): Repository<User>{
+    @Get()
+    findAll(): Promise<User[]> {
+      return this.usersService.findAll();
+    }
 
-   // this.usersRepository = UserService.
-
-    return null;
-  }
+    @Put(':id')
+    update(@Param('id') id: number, @Body() createUserDto: CreateUserDto){
+      return this.usersService.update(id, createUserDto)
+    }
 }
