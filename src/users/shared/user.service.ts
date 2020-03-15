@@ -15,6 +15,10 @@ export class UserService {
         return await this.usersRepository.find();
       }
 
+      async findOne(id: number): Promise<User> {
+        return await this.usersRepository.findOne(id);
+      }
+
       async create(createUserDto: CreateUserDto): Promise<User> {
         const user = new User();
         user.firstName = createUserDto.firstName;
@@ -25,13 +29,17 @@ export class UserService {
       }
 
       async update(id: number, createUserDto: CreateUserDto): Promise<User> {
+        const userFind = await this.usersRepository.findOne(id);
 
-        // eslint-disable-next-line prefer-const
-        let firstUser = await this.usersRepository.findOne(id);
+        userFind.firstName = createUserDto.firstName;
+        userFind.lastName = createUserDto.lastName;
+        userFind.isActive = createUserDto.isActive;
 
-        firstUser.lastName = 'Camargo';
+        return await this.usersRepository.save(userFind);
+      }
 
-        return await this.usersRepository.save(firstUser);
+      async remove(id: number): Promise<void> {
+        await this.usersRepository.delete(id);
       }
     
 }
